@@ -1,0 +1,12 @@
+[package]
+name = "usenix-compat"
+version = "0.1.0"
+compiler = "0.12.0"
+entrypoint = "lib.typ"
+repository = "https://github.com/ja-he/usenix-compat"
+authors = ["ceo@dubious.engineering"]
+license = "MIT-0"
+description = "USENIX template"
+keywords = ["usenix"]
+categories = ["paper"]
+disciplines = ["security", "computing"]
