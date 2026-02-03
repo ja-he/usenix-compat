@@ -121,10 +121,14 @@
   }
 
   // Bibliography styling.
+  // TODO: plain.csl comes from 'talb' [1] and is based on the original style
+  //       created I believe by Oren Patashnik.
+  //       [1]: <https://forum.typst.app/t/a-csl-reproduction-of-bibtexs-plain-bst/6343>
+  let plain-csl = read("plain.csl", encoding: none)
   show std.bibliography: set text(size: 10pt)
   set std.bibliography(
     title: text(size: 12pt, weight: "bold")[References],
-    style: "ieee",
+    style: plain-csl,
   )
 
   // Title block spanning both columns.
