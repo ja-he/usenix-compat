@@ -86,8 +86,14 @@
   }
 
   // Figure captions: left-aligned, 10pt.
-  show figure.caption: set text(size: 10pt)
-  show figure.caption: set align(start)
+  show figure.caption: it => [
+    #set text(size: 10pt)
+    #set align(start)
+    #it.supplement
+    #context it.counter.display(it.numbering):
+    #h(3pt)
+    #it.body
+  ]
   set figure(gap: 2.4em)
   show figure: set place(
     clearance: 3em,
