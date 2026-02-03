@@ -1,6 +1,10 @@
 // USENIX conference paper template for Typst.
 // Modeled after usenix2019_v3.sty for LaTeX.
 
+#import "@preview/pergamon:0.7.1": *
+#let style = format-citation-numeric()
+#let dev = pergamon-dev
+
 #let usenix(
   // The paper's title.
   title: [Paper Title],
@@ -11,8 +15,7 @@
   // The paper's abstract. Can be omitted if you don't have one.
   abstract: none,
 
-  // The result of a call to the `bibliography` function or `none`.
-  bibliography: none,
+  bibliography-file-contents: none,
 
   // The paper's content.
   body,
@@ -109,7 +112,7 @@
   // LaTeX: linkcolor=green!80!black, citecolor=red!70!black, urlcolor=blue!70!black
   show link: set text(fill: rgb("#0000B3"))
   // Bibliography citations: red (citecolor)
-  show cite: it => text(fill: rgb("#B30000"), it)
+  // show cite: it => text(fill: rgb("#B30000"), it)
   // Internal references (sections, figures): green (linkcolor).
   // For bibliography @key refs, element is none; let cite rule handle color.
   show ref: it => {
@@ -120,16 +123,20 @@
     }
   }
 
-  // Bibliography styling.
-  // TODO: plain.csl comes from 'talb' [1] and is based on the original style
-  //       created I believe by Oren Patashnik.
-  //       [1]: <https://forum.typst.app/t/a-csl-reproduction-of-bibtexs-plain-bst/6343>
-  let plain-csl = read("plain.csl", encoding: none)
-  show std.bibliography: set text(size: 10pt)
-  set std.bibliography(
-    title: text(size: 12pt, weight: "bold")[References],
-    style: plain-csl,
-  )
+  if bibliography-file-contents != none {
+    add-bib-resource(bibliography-file-contents)
+  }
+
+  // // Bibliography styling.
+  // // TODO: plain.csl comes from 'talb' [1] and is based on the original style
+  // //       created I believe by Oren Patashnik.
+  // //       [1]: <https://forum.typst.app/t/a-csl-reproduction-of-bibtexs-plain-bst/6343>
+  // let plain-csl = read("plain.csl", encoding: none)
+  // show std.bibliography: set text(size: 10pt)
+  // set std.bibliography(
+  //   title: text(size: 12pt, weight: "bold")[References],
+  //   style: plain-csl,
+  // )
 
   // Title block spanning both columns.
   // LaTeX: \vbox to 2.5in with vertically centered content.
@@ -168,11 +175,65 @@
     // section block's 'above' will take care of this spacing after.
   }
 
-  // Display the paper's contents.
-  body
+  refsection(format-citation: style.format-citation)[
+  
+    // Display the paper's contents.
+    #body
+  
+    // Display bibliography.
+    #if bibliography-file-contents != none {
+      print-bibliography(
+        sorting: "n",
+        format-reference: format-reference(
+          link-titles: false,
+          print-url: true,
+          reference-label: style.reference-label,
+          format-fields: (
+            "edition": (dffmt, value, reference, field, options, style) => {
+              [#value edition]
+            }
+          ),
+          // TODO: this thing is a whole mess and still doesn't really produce the results I want, besides going into the template internals... remove, probably
+          format-functions: (
+            "driver-book": (reference, options) => {
+              // Helper to get edition with " edition" suffix
+              let edition-str = {
+                let ed = reference.fields.at("edition", default: none)
+                if ed != none { [#ed edition] } else { none }
+              }
+              (options.periods)(
+                (dev.maybe-with-date)(reference, options)(
+                  (dev.author-editor-others-translator-others)(reference, options)
+                ),
+                (dev.title-with-language)(reference, options),
+                (dev.byauthor)(reference, options),
+                (dev.byeditor-others)(reference, options),
+                // Volume/volumes WITHOUT edition
+                (options.commas)(
+                  (dev.volume-part-if-maintitle-undef)(reference, options),
+                  reference.fields.at("volumes", default: none),
+                ),
+                (dev.series-number)(reference, options),
+                reference.fields.at("note", default: none),
+                // Publisher, THEN edition
+                (options.commas)(
+                  (dev.publisher-location-date)(reference, options),
+                  edition-str,
+                ),
+                (options.commas)(
+                  (dev.chapter-pages)(reference, options),
+                  reference.fields.at("pagetotal", default: none),
+                ),
+                if options.print-isbn { reference.fields.at("isbn", default: none) } else { none },
+                (dev.doi-eprint-url)(reference, options),
+                (dev.addendum-pubstate)(reference, options)
+              )
+            },
+          ),
+        ), 
 
-  // Display bibliography.
-  if bibliography != none {
-    bibliography
-  }
+        label-generator: style.label-generator
+      )
+    }
+  ]
 }
