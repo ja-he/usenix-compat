@@ -108,8 +108,12 @@
   // Colored hyperlinks to match USENIX LaTeX style.
   // LaTeX: linkcolor=green!80!black, citecolor=red!70!black, urlcolor=blue!70!black
   show link: set text(fill: rgb("#0000B3"))
-  // Bibliography citations: red (citecolor)
-  show cite: it => text(fill: rgb("#B30000"), it)
+  // Bibliography citations: number red, brackets/delimiters black (citecolor).
+  // Scoped regex colors only digit runs, leaving brackets and commas in default color.
+  show cite: it => {
+    show regex("\d+"): m => text(fill: rgb("#B30000"), m)
+    it
+  }
   // Internal references (sections, figures): supplement in default color, number green.
   // Matches LaTeX hyperref behavior where only the number is a colored link.
   // For bibliography @key refs, element is none; let cite rule handle color.
