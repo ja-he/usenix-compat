@@ -14,6 +14,9 @@
   // The result of a call to the `bibliography` function or `none`.
   bibliography: none,
 
+  mandatory-appendices: (),
+  nonmandatory-appendices: (),
+
   // The paper's content.
   body,
 ) = {
@@ -190,8 +193,27 @@
   // Display the paper's contents.
   body
 
+  {
+    set heading(numbering: none, supplement: none)
+    counter(heading).update(0)
+    show heading: it => {
+      set text(12pt, weight: "bold")
+      show: block.with(above: 15pt, below: 13.75pt, sticky: true)
+      it.body
+    }
+    for a in mandatory-appendices {
+      a
+    }
+  }
+
   // Display bibliography.
   if bibliography != none {
     bibliography
+  }
+
+  set heading(numbering: "A")
+  counter(heading).update(0)
+  for a in nonmandatory-appendices {
+    a
   }
 }
