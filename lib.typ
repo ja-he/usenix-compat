@@ -110,11 +110,26 @@
   show link: set text(fill: rgb("#0000B3"))
   // Bibliography citations: red (citecolor)
   show cite: it => text(fill: rgb("#B30000"), it)
-  // Internal references (sections, figures): green (linkcolor).
+  // Internal references (sections, figures): supplement in default color, number green.
+  // Matches LaTeX hyperref behavior where only the number is a colored link.
   // For bibliography @key refs, element is none; let cite rule handle color.
   show ref: it => {
     if it.element != none {
-      text(fill: rgb("#339926"), it)
+      let el = it.element
+      let sup = it.supplement
+      if sup == auto { sup = el.supplement }
+
+      if el.func() == heading and el.numbering != none {
+        if sup == auto { sup = [Section] }
+        let num = numbering(el.numbering, ..counter(heading).at(el.location()))
+        link(el.location(), { text(fill: black, {sup; [ ]}); text(fill: rgb("#339926"), num) })
+      } else if el.func() == figure and el.numbering != none {
+        if sup == auto { sup = if el.kind == table { [Table] } else { [Figure] } }
+        let num = numbering(el.numbering, ..counter(figure.where(kind: el.kind)).at(el.location()))
+        link(el.location(), { text(fill: black, {sup; [ ]}); text(fill: rgb("#339926"), num) })
+      } else {
+        text(fill: rgb("#339926"), it)
+      }
     } else {
       it
     }
