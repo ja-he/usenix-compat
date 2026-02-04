@@ -17,6 +17,10 @@
   mandatory-appendices: (),
   nonmandatory-appendices: (),
 
+  usenix-green: "#00cc00",
+  usenix-red: "#b20000",
+  usenix-blue: "#0000b2",
+
   // The paper's content.
   body,
 ) = {
@@ -101,7 +105,7 @@
   show figure: set place(
     clearance: 3em,
   )
-  show footnote: set text(fill: rgb("#339926"))
+  show footnote: set text(fill: rgb(usenix-green))
   set terms(spacing: 12.0pt)
   show terms: set par(spacing: 14.4pt)
 
@@ -110,11 +114,11 @@
 
   // Colored hyperlinks to match USENIX LaTeX style.
   // LaTeX: linkcolor=green!80!black, citecolor=red!70!black, urlcolor=blue!70!black
-  show link: set text(fill: rgb("#0000B3"))
+  show link: set text(fill: rgb(usenix-blue))
   // Bibliography citations: number red, brackets/delimiters black (citecolor).
   // Scoped regex colors only digit runs, leaving brackets and commas in default color.
   show cite: it => {
-    show regex("\d+"): m => text(fill: rgb("#B30000"), m)
+    show regex("\d+"): m => text(fill: rgb(usenix-red), m)
     it
   }
   // Internal references (sections, figures): supplement in default color, number green.
@@ -129,13 +133,13 @@
       if el.func() == heading and el.numbering != none {
         if sup == auto { sup = [Section] }
         let num = numbering(el.numbering, ..counter(heading).at(el.location()))
-        link(el.location(), { text(fill: black, {sup; [ ]}); text(fill: rgb("#339926"), num) })
+        link(el.location(), { text(fill: black, {sup; [ ]}); text(fill: rgb(usenix-green), num) })
       } else if el.func() == figure and el.numbering != none {
         if sup == auto { sup = if el.kind == table { [Table] } else { [Figure] } }
         let num = numbering(el.numbering, ..counter(figure.where(kind: el.kind)).at(el.location()))
-        link(el.location(), { text(fill: black, {sup; [ ]}); text(fill: rgb("#339926"), num) })
+        link(el.location(), { text(fill: black, {sup; [ ]}); text(fill: rgb(usenix-green), num) })
       } else {
-        text(fill: rgb("#339926"), it)
+        text(fill: rgb(usenix-green), it)
       }
     } else {
       it
