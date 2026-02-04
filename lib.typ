@@ -24,7 +24,7 @@
   set text(font: "TeX Gyre Termes", size: 10pt)
 
   // Monospace font for code. No syntax highlighting (match LaTeX verbatim).
-  show raw: set text(font: "TeX Gyre Cursor", ligatures: false, fill: black)
+  show raw: set text(size: 10pt, font: "TeX Gyre Cursor", ligatures: false, fill: black)
 
   // Page setup: US Letter, two-column, USENIX margins.
   // Active text area: 7in x 9in.
